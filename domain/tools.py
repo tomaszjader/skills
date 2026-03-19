@@ -1,5 +1,5 @@
 from langchain.tools import tool
-from skills import SKILLS
+from domain.skills import SKILLS
 
 @tool
 def load_skill(skill_name: str) -> str:

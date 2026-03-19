@@ -1,8 +1,8 @@
 from typing import Callable
 from langchain.agents.middleware import ModelRequest, ModelResponse, AgentMiddleware
 from langchain.messages import SystemMessage
-from skills import SKILLS
-from tools import load_skill
+from domain.skills import SKILLS
+from domain.tools import load_skill
 
 class SkillMiddleware(AgentMiddleware):
     """Middleware that injects skill descriptions into the system prompt."""

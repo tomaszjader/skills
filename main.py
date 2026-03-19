@@ -1,7 +1,7 @@
 import uuid
 import os
 from dotenv import load_dotenv
-from agent import get_agent
+from core.agent import get_agent
 
 # Load environment variables
 load_dotenv()

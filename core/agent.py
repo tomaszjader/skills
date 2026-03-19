@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
-from middleware import SkillMiddleware
+from core.middleware import SkillMiddleware
 
 def get_agent():
     """Initialize and return the SQL assistant agent."""
