@@ -12,9 +12,9 @@ def load_skill(skill_name: str) -> str:
     """
     # Find and return the requested skill
     for skill in SKILLS:
-        if skill["name"] == skill_name:
-            return f"Loaded skill: {skill_name}\n\n{skill['content']}"
+        if skill.name == skill_name:
+            return f"Loaded skill: {skill_name}\n\n{skill.content}"
     
     # Skill not found
-    available = ", ".join(s["name"] for s in SKILLS)
+    available = ", ".join(s.name for s in SKILLS)
     return f"Skill '{skill_name}' not found. Available skills: {available}"

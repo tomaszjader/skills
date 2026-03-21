@@ -1,7 +1,21 @@
 import uuid
 import os
+import logging
 from dotenv import load_dotenv
+from rich.console import Console
+from rich.panel import Panel
+from rich.markdown import Markdown
 from core.agent import get_agent
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Initialize Rich console
+console = Console()
 
 # Load environment variables
 load_dotenv()
@@ -10,8 +24,7 @@ def main():
     """Main function to run the SQL Assistant."""
     # Check for API key
     if not os.getenv("OPENAI_API_KEY"):
-        print("Warning: OPENAI_API_KEY not found in environment. Please set it in .env file.")
-        # return # Proceed anyway to see error or if user set it differently
+        console.print("[yellow]Warning: OPENAI_API_KEY not found in environment. Please set it in .env file.[/yellow]")
     
     # Initialize the agent
     agent = get_agent()
@@ -20,36 +33,51 @@ def main():
     thread_id = str(uuid.uuid4())
     config = {"configurable": {"thread_id": thread_id}}
     
-    print("Welcome to the SQL Assistant!")
-    print("Type 'exit' to quit.")
-    print("-" * 30)
+    console.print(Panel.fit(
+        "Welcome to the [bold blue]SQL Assistant[/bold blue]!\n"
+        "I can help you analyze sales and inventory data.\n"
+        "Type [bold red]'exit'[/bold red] to quit.",
+        title="System"
+    ))
     
     while True:
-        user_input = input("\nYou: ")
-        if user_input.lower() in ["exit", "quit", "q"]:
-            break
+        try:
+            user_input = console.input("\n[bold green]You:[/bold green] ")
+            if user_input.lower() in ["exit", "quit", "q"]:
+                console.print("[blue]Goodbye![/blue]")
+                break
             
-        # Ask for a SQL query
-        result = agent.invoke(
-            {
-                "messages": [
+            if not user_input.strip():
+                continue
+                
+            # Ask for a SQL query
+            with console.status("[bold blue]Thinking...[/bold blue]"):
+                result = agent.invoke(
                     {
-                        "role": "user",
-                        "content": user_input,
-                    }
-                ]
-            },
-            config
-        )
-        
-        # Print the conversation
-        for message in result["messages"]:
-            # We only print Assistant or Tool messages to avoid re-printing the user input
-            if message.type in ["ai", "tool"]:
-                if hasattr(message, 'pretty_print'):
-                    message.pretty_print()
-                else:
-                    print(f"{message.type.upper()}: {message.content}")
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": user_input,
+                            }
+                        ]
+                    },
+                    config
+                )
+            
+            # Print the conversation
+            for message in result["messages"]:
+                # We only print Assistant or Tool messages to avoid re-printing the user input
+                if message.type == "ai":
+                    console.print(Panel(Markdown(message.content), title="Assistant", border_style="blue"))
+                elif message.type == "tool":
+                    console.print(f"[dim]Tool ({message.name}): {message.content[:100]}...[/dim]")
+                    
+        except KeyboardInterrupt:
+            console.print("\n[blue]Goodbye![/blue]")
+            break
+        except Exception as e:
+            logger.error(f"Error during agent invocation: {e}")
+            console.print(f"[bold red]Error:[/bold red] {e}")
 
 if __name__ == "__main__":
     main()

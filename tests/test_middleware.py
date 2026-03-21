@@ -9,8 +9,8 @@ def test_middleware_init():
     
     # Check that all skills from domain.skills are in the prompt
     for skill in SKILLS:
-        assert f"**{skill['name']}**" in middleware.skills_prompt
-        assert skill['description'] in middleware.skills_prompt
+        assert f"**{skill.name}**" in middleware.skills_prompt
+        assert skill.description in middleware.skills_prompt
 
 def test_middleware_wrap_model_call(mock_model_request):
     """Test that the middleware correctly modifies the ModelRequest."""
@@ -30,4 +30,4 @@ def test_middleware_wrap_model_call(mock_model_request):
     content_text = "".join([block["text"] for block in new_system_message.content_blocks if block["type"] == "text"])
     assert "## Available Skills" in content_text
     assert middleware.skills_prompt in content_text
-    assert "Use the load_skill tool" in content_text
+    assert "Use the `load_skill` tool" in content_text
