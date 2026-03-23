@@ -3,18 +3,24 @@ from domain.skills import SKILLS
 
 @tool
 def load_skill(skill_name: str) -> str:
-    """Load the full content of a skill into the agent's context. 
-    Use this when you need detailed information about how to handle a specific type of request. 
-    This will provide you with comprehensive instructions, policies, and guidelines for the skill area.
+    """Load the full technical documentation for a specific skill.
+    
+    Use this when you need detailed information about a business area, its database 
+    schema, or specific business logic rules. Providing the skill name will return 
+    the full reference documentation.
     
     Args:
-        skill_name: The name of the skill to load (e.g., "sales_analytics", "inventory_management")
+        skill_name: The exact name of the skill to load (e.g., "sales_analytics", "inventory_management")
     """
     # Find and return the requested skill
     for skill in SKILLS:
         if skill.name == skill_name:
-            return f"Loaded skill: {skill_name}\n\n{skill.content}"
+            return f"### Document: {skill_name}\n\n{skill.content}"
     
     # Skill not found
-    available = ", ".join(s.name for s in SKILLS)
-    return f"Skill '{skill_name}' not found. Available skills: {available}"
+    available = ", ".join(f"'{s.name}'" for s in SKILLS)
+    return (
+        f"Error: Skill '{skill_name}' not found.\n"
+        f"Please choose from the following Available skills: {available}. "
+        "Make sure to use the exact name as listed."
+    )

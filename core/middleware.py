@@ -36,10 +36,13 @@ class SkillMiddleware(AgentMiddleware):
         """Inject skill descriptions into the system prompt before the model call."""
         
         skills_section = (
-            "\n\n## Available Skills\n\n"
+            "\n\n## Available Specialized Skills\n\n"
+            "You have access to the following technical documentation modules. "
+            "Each module contains database schemas, business logic, and example queries:\n\n"
             f"{self.skills_prompt}\n\n"
-            "INSTRUCTION: Use the `load_skill` tool when you need detailed technical "
-            "information, schemas, or business logic for a specific skill area."
+            "**INSTRUCTION**: When a user's request pertains to one of these areas, "
+            "you MUST first Use the `load_skill` tool to retrieve the necessary technical "
+            "details before providing an answer or writing a query."
         )
         
         # Access existing content blocks
@@ -50,7 +53,7 @@ class SkillMiddleware(AgentMiddleware):
             {"type": "text", "text": skills_section}
         ]
         
-        logger.debug(f"Injecting skills section into system prompt. Available skills: {len(SKILLS)}")
+        logger.info(f"Injecting {len(SKILLS)} skills into system prompt: {', '.join(s.name for s in SKILLS)}")
         
         # Create a new system message and override request
         new_system_message = SystemMessage(content=new_blocks)

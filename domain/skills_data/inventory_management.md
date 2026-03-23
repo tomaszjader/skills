@@ -1,3 +1,6 @@
+---
+description: Database schema and business logic for inventory tracking including products, warehouses, and stock levels.
+---
 # Inventory Management Schema
 
 ## Tables

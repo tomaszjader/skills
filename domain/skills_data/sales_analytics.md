@@ -1,3 +1,6 @@
+---
+description: Database schema and business logic for sales data analysis including customers, orders, and revenue.
+---
 # Sales Analytics Schema
 
 ## Tables
